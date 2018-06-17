@@ -1,0 +1,8 @@
+sf_archery_sports_manager:
+    resource: "@SfArcherySportsManagerBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
