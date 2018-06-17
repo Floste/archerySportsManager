@@ -11,6 +11,7 @@ namespace Sf\ArcherySportsManagerBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Concours;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
 use Sf\ArcherySportsManagerBundle\Repository\ConcoursRepository;
@@ -47,6 +48,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
             $row = array_combine($keys,$item);
             $saison = $this->getSaison($row);
             $concours = $this->getConcours($row,$saison);
+            $archer = $this->getArcher($row);
         }
     }
 
@@ -70,7 +72,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
     private function getConcours($row,$saison){
         $startDate = \DateTime::createFromFormat("d/m/Y",$row["D_DEBUT_CONCOURS"]);
         $endDate = \DateTime::createFromFormat("d/m/Y",$row["D_FIN_CONCOURS"]);
-        $lieuConcours = utf8_encode($row["LIEU_CONCOURS"]);
+        $lieuConcours = $this->ConvertToUTF8($row["LIEU_CONCOURS"]);
         /**
          * @var ConcoursRepository $concoursRepository
          */
@@ -99,4 +101,39 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
         return $concours;
     }
 
+    private function getArcher($row){
+        $archerRepository = $this->em->getRepository(Archer::class);
+        $archer = $archerRepository->findOneBy([
+            'numLicence' => $row["NO_LICENCE"]
+        ]);
+        if(is_null($archer)){
+            $archer = new Archer();
+            $archer->setNumLicence($row["NO_LICENCE"])
+                ->setCategorie($row["CAT"])
+                ->setArme($row["ARME"])
+                ->setNom($row["NOM_PERSONNE"])
+                ->setPrenom($row["PRENOM_PERSONNE"])
+                ->setSexe($row["SEXE_PERSONNE"])
+                ;
+            $this->em->persist($archer);
+            $this->em->flush();
+        }
+
+    }
+
+    private function ConvertToUTF8($text){
+
+        $encoding = mb_detect_encoding($text, mb_detect_order(), false);
+
+        if($encoding == "UTF-8")
+        {
+            $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+        }
+
+
+        $out = iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text);
+
+
+        return $out;
+    }
 }
