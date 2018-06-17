@@ -2,6 +2,7 @@
 
 namespace Sf\ArcherySportsManagerBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,6 +23,11 @@ class Saison
     private $id;
 
     /**
+     * @ORM\OneToMany(targetEntity="Concours", mappedBy="saison")
+     */
+    private $concours;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
@@ -31,17 +37,24 @@ class Saison
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="startDate", type="datetime", unique=true)
+     * @ORM\Column(name="startDate", type="datetime", unique=true, nullable=true)
      */
     private $startDate;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="endDate", type="datetime", unique=true)
+     * @ORM\Column(name="endDate", type="datetime", unique=true, nullable=true)
      */
     private $endDate;
 
+    /**
+     * Saison constructor.
+     */
+    public function __construct()
+    {
+        $this->concours = new ArrayCollection();
+    }
 
     /**
      * Get id.
@@ -124,4 +137,23 @@ class Saison
     {
         return $this->endDate;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getConcours()
+    {
+        return $this->concours;
+    }
+
+    /**
+     * @param mixed $concours
+     * @return Saison
+     */
+    public function setConcours($concours)
+    {
+        $this->concours = $concours;
+        return $this;
+    }
+
 }

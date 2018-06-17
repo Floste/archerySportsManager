@@ -22,6 +22,12 @@ class Concours
     private $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Saison", inversedBy="Concours")
+     * @ORM\JoinColumn(name="saison_id", referencedColumnName="id")
+     */
+    private $saison;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="startDate", type="datetime")
@@ -59,21 +65,21 @@ class Concours
     /**
      * @var string
      *
-     * @ORM\Column(name="formuleTir", type="string", length=255)
+     * @ORM\Column(name="formuleTir", type="string", length=255, nullable=true)
      */
     private $formuleTir;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="niveauChampionnat", type="string", length=5)
+     * @ORM\Column(name="niveauChampionnat", type="string", length=5, nullable=true)
      */
     private $niveauChampionnat;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="detailNiveauChampionnat", type="string", length=255)
+     * @ORM\Column(name="detailNiveauChampionnat", type="string", length=255, nullable=true)
      */
     private $detailNiveauChampionnat;
 
@@ -278,5 +284,23 @@ class Concours
     public function getDetailNiveauChampionnat()
     {
         return $this->detailNiveauChampionnat;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSaison()
+    {
+        return $this->saison;
+    }
+
+    /**
+     * @param mixed $saison
+     * @return Concours
+     */
+    public function setSaison($saison)
+    {
+        $this->saison = $saison;
+        return $this;
     }
 }
