@@ -10,7 +10,6 @@ namespace Sf\ArcherySportsManagerBundle\Command;
 
 
 use Doctrine\ORM\EntityManager;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Concours;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
@@ -39,8 +38,8 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->em = $this->getContainer()->get('doctrine')->getManager();
-        $fftaFile = IOFactory::load($input->getArgument("fftaFile"));
-        $fileContent = $fftaFile->getActiveSheet()->toArray();
+
+        $fileContent = $this->getArrayFromCsvFile($input->getArgument("fftaFile"));
 
         $keys = array_shift($fileContent);
 
@@ -72,7 +71,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
     private function getConcours($row,$saison){
         $startDate = \DateTime::createFromFormat("d/m/Y",$row["D_DEBUT_CONCOURS"]);
         $endDate = \DateTime::createFromFormat("d/m/Y",$row["D_FIN_CONCOURS"]);
-        $lieuConcours = $this->ConvertToUTF8($row["LIEU_CONCOURS"]);
+        $lieuConcours = $row["LIEU_CONCOURS"];
         /**
          * @var ConcoursRepository $concoursRepository
          */
@@ -93,7 +92,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
                 ->setNomStructureOrganisatrice($row["NOM_STRUCTURE_ORGANISATRICE"])
                 ->setStartDate($startDate)
                 ->setEndDate($endDate)
-                ;
+            ;
 
             $this->em->persist($concours);
             $this->em->flush();
@@ -114,26 +113,19 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
                 ->setNom($row["NOM_PERSONNE"])
                 ->setPrenom($row["PRENOM_PERSONNE"])
                 ->setSexe($row["SEXE_PERSONNE"])
-                ;
+            ;
             $this->em->persist($archer);
             $this->em->flush();
         }
 
     }
 
-    private function ConvertToUTF8($text){
+    private function getArrayFromCsvFile($filePath){
+        $detect = array("CP1252","ASCII","ISO-8859-1","ISO-8859-15","UTF-8");
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+        $reader->setInputEncoding(mb_detect_encoding(file_get_contents($filePath),$detect));
+        $fftaFile = $reader->load($filePath);
 
-        $encoding = mb_detect_encoding($text, mb_detect_order(), false);
-
-        if($encoding == "UTF-8")
-        {
-            $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
-        }
-
-
-        $out = iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text);
-
-
-        return $out;
+        return $fftaFile->getActiveSheet()->toArray();
     }
 }
