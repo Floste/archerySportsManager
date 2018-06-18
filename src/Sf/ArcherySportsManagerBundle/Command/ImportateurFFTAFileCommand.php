@@ -12,6 +12,7 @@ namespace Sf\ArcherySportsManagerBundle\Command;
 use Doctrine\ORM\EntityManager;
 use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Concours;
+use Sf\ArcherySportsManagerBundle\Entity\Depart;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
 use Sf\ArcherySportsManagerBundle\Repository\ConcoursRepository;
 use Sf\ArcherySportsManagerBundle\Repository\SaisonRepository;
@@ -48,6 +49,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
             $saison = $this->getSaison($row);
             $concours = $this->getConcours($row,$saison);
             $archer = $this->getArcher($row);
+            $depart = $this->getDepart($row,$archer,$concours);
         }
     }
 
@@ -100,6 +102,31 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
         return $concours;
     }
 
+    private function getDepart($row,$archer,$concours){
+        /**
+         * @var Depart $depart
+         */
+        $departRepository = $this->em->getRepository(Depart::class);
+        $depart = $departRepository->findOneBy([
+            'concours' => $concours,
+            'archer' => $archer,
+            'numDepart' => $row["NUM_DEPART"]
+        ]);
+        if(is_null($depart)){
+            $depart = new Depart();
+            $depart->setArcher($archer)
+                ->setConcours($concours)
+                ->setArme($row["ARME"])
+                ->setCategorie($row["CAT"])
+                ->setDiscipline($row["DISCIPLINE"])
+                ->setNumDepart($row["NUM_DEPART"])
+                ;
+            $this->em->persist($depart);
+            $this->em->flush();
+        }
+        return $depart;
+    }
+
     private function getArcher($row){
         $archerRepository = $this->em->getRepository(Archer::class);
         $archer = $archerRepository->findOneBy([
@@ -117,7 +144,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
             $this->em->persist($archer);
             $this->em->flush();
         }
-
+        return $archer;
     }
 
     private function getArrayFromCsvFile($filePath){
