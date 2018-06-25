@@ -57,16 +57,33 @@ class Depart
 
     /**
      * @var Archer
-     * @   ORM\ManyToOne(targetEntity="Archer", mappedBy="category")
-     * @ORM\ManyToOne(targetEntity="Archer")
+     * @ORM\ManyToOne(targetEntity="Archer", inversedBy="departs")
+     * @ORM\JoinColumn(name="archer_id", referencedColumnName="id")
      */
     private $archer;
 
     /**
      * @var Concours
-     * @ORM\ManyToOne(targetEntity="Concours")
+     * @ORM\ManyToOne(targetEntity="Concours", inversedBy="departs")
+     * @ORM\JoinColumn(name="concours_id", referencedColumnName="id")
      */
     private $concours;
+
+    /**
+     * @var Resultat
+     * @ORM\OneToOne(targetEntity="Resultat", inversedBy="depart", cascade={"remove"},orphanRemoval=true)
+     */
+    private $resultat;
+
+    /**
+     * Depart constructor.
+     */
+    public function __construct()
+    {
+        if($this->getDiscipline() == "S"){
+        }
+    }
+
 
     /**
      * @return int
@@ -193,4 +210,23 @@ class Depart
         $this->concours = $concours;
         return $this;
     }
+
+    /**
+     * @return Resultat
+     */
+    public function getResultat()
+    {
+        return $this->resultat;
+    }
+
+    /**
+     * @param Resultat $resultat
+     * @return Depart
+     */
+    public function setResultat($resultat)
+    {
+        $this->resultat = $resultat;
+        return $this;
+    }
+
 }

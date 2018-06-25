@@ -1,6 +1,8 @@
 <?php
 
 namespace Sf\ArcherySportsManagerBundle\Repository;
+use Sf\ArcherySportsManagerBundle\Entity\Archer;
+use Sf\ArcherySportsManagerBundle\Entity\Concours;
 
 /**
  * ConcoursRepository

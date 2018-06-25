@@ -2,6 +2,7 @@
 
 namespace Sf\ArcherySportsManagerBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -63,6 +64,38 @@ class Archer
      */
     private $arme;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Depart", mappedBy="archer")
+     *
+     */
+    private $departs;
+
+    /**
+     * Archer constructor.
+     */
+    public function __construct()
+    {
+        $this->departs = new ArrayCollection();
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDeparts()
+    {
+        return $this->departs;
+    }
+
+    /**
+     * @param ArrayCollection $departs
+     * @return Archer
+     */
+    public function setDeparts($departs)
+    {
+        $this->departs = $departs;
+        return $this;
+    }
 
     /**
      * Get id.

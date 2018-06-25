@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManager;
 use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Concours;
 use Sf\ArcherySportsManagerBundle\Entity\Depart;
+use Sf\ArcherySportsManagerBundle\Entity\Resultat;
+use Sf\ArcherySportsManagerBundle\Entity\ResultatSalle;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
 use Sf\ArcherySportsManagerBundle\Repository\ConcoursRepository;
 use Sf\ArcherySportsManagerBundle\Repository\SaisonRepository;
@@ -50,9 +52,18 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
             $concours = $this->getConcours($row,$saison);
             $archer = $this->getArcher($row);
             $depart = $this->getDepart($row,$archer,$concours);
+            if("S" == $row["DISCIPLINE"]){
+                $resultat = $this->getResultatSalle($row,$depart);
+            }
         }
     }
 
+    /**
+     * @param $row
+     * @return null|Saison
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function getSaison($row){
         /**
          * @var SaisonRepository $saisonRepository
@@ -70,9 +81,18 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
         return $saison;
     }
 
-    private function getConcours($row,$saison){
+    /**
+     * @param $row
+     * @param $saison
+     * @return null|Concours
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function getConcours($row,Saison $saison){
         $startDate = \DateTime::createFromFormat("d/m/Y",$row["D_DEBUT_CONCOURS"]);
+        $startDate->setTime(0,0,0);
         $endDate = \DateTime::createFromFormat("d/m/Y",$row["D_FIN_CONCOURS"]);
+        $endDate->setTime(0,0,0);
         $lieuConcours = $row["LIEU_CONCOURS"];
         /**
          * @var ConcoursRepository $concoursRepository
@@ -102,7 +122,15 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
         return $concours;
     }
 
-    private function getDepart($row,$archer,$concours){
+    /**
+     * @param $row
+     * @param Archer $archer
+     * @param Concours $concours
+     * @return null |Depart
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function getDepart($row,Archer $archer,Concours $concours){
         /**
          * @var Depart $depart
          */
@@ -127,6 +155,50 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
         return $depart;
     }
 
+    /**
+     * @param $row
+     * @param Depart $depart
+     * @return ResultatSalle
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function getResultatSalle($row,Depart $depart){
+        if(is_null($depart->getResultat())){
+            $result = new Resultat();
+            $result->setDepart($depart)
+                ->setPlaceDefinitive($row["PLACE_DEF"])
+                ->setDistance($row["DISTANCE"])
+                ->setBlason($row["BLASON"])
+                ->setScore($row["SCORE"])
+                ->setPaille($row["PAILLE"])
+                ->setDix($row["DIX"])
+                ->setNeuf($row["NEUF"])
+                ->setPlaceQualif($row["PLACE_QUALIF"])
+                ->setScoreDistance1($row["SCORE_DIST1"])
+                ->setScoreDistance2($row["SCORE_DIST2"])
+                ->setScoreDistance3($row["SCORE_DIST3"])
+                ->setScoreDistance4($row["SCORE_DIST4"])
+                ->setScore32($row["SCORE_32"])
+                ->setScore16($row["SCORE_16"])
+                ->setScore8($row["SCORE_8"])
+                ->setScore4($row["SCORE_QUART"])
+                ->setScore2($row["SCORE_DEMI"])
+                ->setScorePetiteFinal($row["SCORE_PETITE_FINAL"])
+                ->setScoreFinal($row["SCORE_FINAL"])
+            ;
+            $this->em->persist($result);
+            $depart->setResultat($result);
+            $this->em->flush();
+        }
+        return $depart->getResultat();
+    }
+
+    /**
+     * @param $row
+     * @return null|Archer
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function getArcher($row){
         $archerRepository = $this->em->getRepository(Archer::class);
         $archer = $archerRepository->findOneBy([
