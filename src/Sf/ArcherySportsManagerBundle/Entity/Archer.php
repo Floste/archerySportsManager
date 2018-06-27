@@ -13,6 +13,24 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Archer
 {
+
+    const CATEGORIE_SENIOR = 'S';
+    const CATEGORIE_VETERAN = 'V';
+    const CATEGORIE_SUPER_VETERAN = 'SV';
+    const CATEGORIE_JUNIOR = 'J';
+    const CATEGORIE_CADET = 'C';
+    const CATEGORIE_BENJAMIN = 'B';
+    const CATEGORIE_MINIME = 'M';
+
+    const SEX_HOMME = 'H';
+    const SEX_FEMME = 'F';
+
+    const ARME_CLASSIQUE = 'CL';
+    const ARME_CAMPOUND = 'CO';
+    const ARME_BAREBOW = 'BB';
+    const ARME_ARC_DROIT = 'AD';
+    const ARME_TIR_LIBRE = 'TL';
+
     /**
      * @var int
      *

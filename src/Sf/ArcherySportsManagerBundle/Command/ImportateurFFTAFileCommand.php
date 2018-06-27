@@ -52,9 +52,7 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
             $concours = $this->getConcours($row,$saison);
             $archer = $this->getArcher($row);
             $depart = $this->getDepart($row,$archer,$concours);
-            if("S" == $row["DISCIPLINE"]){
-                $resultat = $this->getResultatSalle($row,$depart);
-            }
+            $resultat = $this->getResultat($row,$depart);
         }
     }
 
@@ -158,11 +156,11 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
     /**
      * @param $row
      * @param Depart $depart
-     * @return ResultatSalle
+     * @return Resultat
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    private function getResultatSalle($row,Depart $depart){
+    private function getResultat($row,Depart $depart){
         if(is_null($depart->getResultat())){
             $result = new Resultat();
             $result->setDepart($depart)

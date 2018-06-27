@@ -18,6 +18,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Depart
 {
+    const DISCIPLINE_SALLE = 'S';
+    const DISCIPLINE_FEDERAL = 'E';
+    const DISCIPLINE_FTTA = 'F';
+    const DISCIPLINE_NATURE = 'N';
+    const DISCIPLINE_3D = '3';
+    const DISCIPLINE_CAMPAGNE = 'C';
+
     /**
      * @var int
      *
