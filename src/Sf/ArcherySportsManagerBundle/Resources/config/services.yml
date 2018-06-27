@@ -2,3 +2,13 @@ services:
 #    sf_archery_sports_manager.example:
 #        class: Sf\ArcherySportsManagerBundle\Example
 #        arguments: ["@service_id", "plain_value", "%parameter%"]
+
+    ImportateurFFTAFileCsv:
+        class: \Sf\ArcherySportsManagerBundle\Service\ImportateurFFTAFileCsv
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    Sf\ArcherySportsManagerBundle\Command\ImportateurFFTAFileCommand:
+        calls:
+            - ["setImportService", ["@ImportateurFFTAFileCsv"]]
+        tags:
+            - { name: 'console.command' }
