@@ -201,7 +201,7 @@ class Depart
     }
 
     /**
-     * @return Archer
+     * @return Concours
      */
     public function getConcours()
     {
@@ -236,4 +236,22 @@ class Depart
         return $this;
     }
 
+    public function getNbFleches(){
+        switch ($this->getDiscipline()){
+            case self::DISCIPLINE_SALLE:
+                $formuleTir = $this->getConcours()->getFormuleTir();
+                if(strpos($formuleTir,"25")>0 && strpos($formuleTir,"18")>0){
+                    return 120;
+                }else{
+                    return 60;
+                }
+            case self::DISCIPLINE_FEDERAL:
+            case self::DISCIPLINE_FTTA:
+                return 72;
+            case self::DISCIPLINE_3D:
+            case self::DISCIPLINE_NATURE:
+            case self::DISCIPLINE_CAMPAGNE:
+                return null;
+        }
+    }
 }

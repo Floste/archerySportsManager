@@ -23,10 +23,12 @@ class ImportateurFFTAFileCommand extends ContainerAwareCommand
     private $importateurFFTAFileCsv;
 
     /**
+     * ImportateurFFTAFileCommand constructor.
      * @param ImportateurFFTAFileCsv $importateurFFTAFileCsv
      */
-    public function setImportService(ImportateurFFTAFileCsv $importateurFFTAFileCsv)
+    public function __construct(ImportateurFFTAFileCsv $importateurFFTAFileCsv)
     {
+        parent::__construct();
         $this->importateurFFTAFileCsv = $importateurFFTAFileCsv;
     }
 

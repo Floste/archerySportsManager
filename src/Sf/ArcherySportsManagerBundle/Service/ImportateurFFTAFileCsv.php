@@ -8,7 +8,7 @@
 
 namespace Sf\ArcherySportsManagerBundle\Service;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Concours;
 use Sf\ArcherySportsManagerBundle\Entity\Depart;
@@ -29,7 +29,7 @@ class ImportateurFFTAFileCsv
      * ImportateurFFTAFileCsv constructor.
      * @param EntityManager $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }

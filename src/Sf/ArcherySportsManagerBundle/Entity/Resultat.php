@@ -28,7 +28,7 @@ class Resultat
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Depart", mappedBy="Depart")
+     * @ORM\OneToOne(targetEntity="Depart", mappedBy="resultat")
      */
     private $depart;
 
@@ -543,5 +543,13 @@ class Resultat
         return $this;
     }
 
+    public function getMoyenne(){
+        if(!is_null($this->getDepart()->getNbFleches())){
+            return
+                round($this->getScore() / $this->getDepart()->getNbFleches(),2)
+                ;
+        }
+        return null;
+    }
 }
 

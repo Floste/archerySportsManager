@@ -1,6 +1,7 @@
 <?php
 
 namespace Sf\ArcherySportsManagerBundle\Repository;
+use Sf\ArcherySportsManagerBundle\Entity\Saison;
 
 /**
  * ArcherRepository
@@ -10,4 +11,15 @@ namespace Sf\ArcherySportsManagerBundle\Repository;
  */
 class ArcherRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getArchersFromSaison(Saison $saison){
+        return $this->createQueryBuilder('a')
+            ->join('a.departs','d')
+            ->join('d.concours','c')
+            ->join('d.resultat','r')
+            ->andWhere('c.saison = :saison')
+            ->setParameter('saison',$saison->getId())
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }
