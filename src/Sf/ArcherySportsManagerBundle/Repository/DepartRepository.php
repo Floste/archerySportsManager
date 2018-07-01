@@ -2,6 +2,7 @@
 
 namespace Sf\ArcherySportsManagerBundle\Repository;
 use Doctrine\ORM\EntityRepository;
+use Sf\ArcherySportsManagerBundle\Entity\Saison;
 
 /**
  * DepartRepository
@@ -11,4 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class DepartRepository extends EntityRepository
 {
+    public function getNbDepartsForSaison(Saison $saison){
+        return $this->createQueryBuilder('d')
+            ->select('count(d.id)')
+            ->join('d.concours','c')
+            ->andWhere('c.saison = :saison')
+            ->setParameter('saison',$saison->getId())
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
 }
