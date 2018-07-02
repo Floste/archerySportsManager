@@ -321,7 +321,7 @@ class Concours
     }
 
     /**
-     * @return mixed
+     * @return Saison
      */
     public function getSaison()
     {

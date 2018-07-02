@@ -2,6 +2,7 @@
 
 namespace Sf\ArcherySportsManagerBundle\Repository;
 use Doctrine\ORM\EntityRepository;
+use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
 
 /**
@@ -20,6 +21,34 @@ class DepartRepository extends EntityRepository
             ->setParameter('saison',$saison->getId())
             ->getQuery()
             ->getSingleScalarResult()
+            ;
+    }
+
+    public function getDepartsForArcherSaisonDiscipline(Archer $archer, Saison $saison, $discipline){
+        return $this->createQueryBuilder('d')
+            ->join('d.concours','c')
+            ->join('d.resultat','r')
+            ->andWhere('c.saison = :saison')
+            ->setParameter('saison',$saison->getId())
+            ->andWhere('d.discipline = :discipline')
+            ->setParameter('discipline',$discipline)
+            ->andWhere('d.archer = :archer')
+            ->setParameter('archer',$archer->getId())
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getDepartsForArcherSaison(Archer $archer, Saison $saison){
+        return $this->createQueryBuilder('d')
+            ->join('d.concours','c')
+            ->join('d.resultat','r')
+            ->andWhere('c.saison = :saison')
+            ->setParameter('saison',$saison->getId())
+            ->andWhere('d.archer = :archer')
+            ->setParameter('archer',$archer->getId())
+            ->getQuery()
+            ->getResult()
             ;
     }
 

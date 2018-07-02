@@ -20,10 +20,21 @@ class Depart
 {
     const DISCIPLINE_SALLE = 'S';
     const DISCIPLINE_FEDERAL = 'E';
-    const DISCIPLINE_FTTA = 'F';
+    const DISCIPLINE_FITA = 'F';
     const DISCIPLINE_NATURE = 'N';
     const DISCIPLINE_3D = '3';
     const DISCIPLINE_CAMPAGNE = 'C';
+
+    public static function getDisciplineName($discipline){
+        switch ($discipline){
+            case self::DISCIPLINE_SALLE : return "Salle";
+            case self::DISCIPLINE_FEDERAL : return "Fédéral";
+            case self::DISCIPLINE_FITA : return "Fita";
+            case self::DISCIPLINE_NATURE : return "Nature";
+            case self::DISCIPLINE_3D : return "3D";
+            case self::DISCIPLINE_CAMPAGNE : return "Campagne";
+        }
+    }
 
     /**
      * @var int
@@ -246,7 +257,7 @@ class Depart
                     return 60;
                 }
             case self::DISCIPLINE_FEDERAL:
-            case self::DISCIPLINE_FTTA:
+            case self::DISCIPLINE_FITA:
                 return 72;
             case self::DISCIPLINE_3D:
             case self::DISCIPLINE_NATURE:

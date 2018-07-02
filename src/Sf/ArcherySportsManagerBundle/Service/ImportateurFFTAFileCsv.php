@@ -84,6 +84,9 @@ class ImportateurFFTAFileCsv
         $startDate = \DateTime::createFromFormat("d/m/Y",$row["D_DEBUT_CONCOURS"]);
         $startDate->setTime(0,0,0);
         $endDate = \DateTime::createFromFormat("d/m/Y",$row["D_FIN_CONCOURS"]);
+        if(!$endDate){
+            $endDate = $startDate;
+        }
         $endDate->setTime(0,0,0);
         $lieuConcours = $row["LIEU_CONCOURS"];
         /**

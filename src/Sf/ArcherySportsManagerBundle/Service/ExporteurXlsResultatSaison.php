@@ -23,6 +23,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Sf\ArcherySportsManagerBundle\Entity\Archer;
 use Sf\ArcherySportsManagerBundle\Entity\Depart;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
+use Sf\ArcherySportsManagerBundle\Repository\DepartRepository;
+use Sf\ArcherySportsManagerBundle\Repository\SaisonRepository;
 
 class ExporteurXlsResultatSaison
 {
@@ -38,12 +40,14 @@ class ExporteurXlsResultatSaison
     const CLM_DEPART_NUM = 'J';
     const CLM_RESULTAT_SERIE1 = 'K';
     const CLM_RESULTAT_SERIE2 = 'L';
-    const CLM_RESULTAT_SCORE = 'M';
-    const CLM_RESULTAT_PLACE = 'N';
-    const CLM_RESULTAT_MOYENNE = 'O';
-    const CLM_RESULTAT_MOYENNE_SAISON = 'P';
-    const CLM_RESULTAT_MOYENNE_SAISON_PREC = 'Q';
-    const CLM_RESULTAT_MOYENNE_SAISON_PREC2 = 'R';
+    const CLM_RESULTAT_SERIE3 = 'M';
+    const CLM_RESULTAT_SERIE4 = 'N';
+    const CLM_RESULTAT_SCORE = 'O';
+    const CLM_RESULTAT_PLACE = 'P';
+    const CLM_RESULTAT_MOYENNE = 'Q';
+    const CLM_RESULTAT_MOYENNE_SAISON = 'R';
+    const CLM_RESULTAT_MOYENNE_SAISON_PREC = 'S';
+    const CLM_RESULTAT_MOYENNE_SAISON_PREC2 = 'T';
 
     /**
      * @var EntityManager $em
@@ -65,6 +69,11 @@ class ExporteurXlsResultatSaison
 
     private $startLineDepart;
     private $maxLineDepart;
+
+    /** @var DepartRepository */
+    private $departRepo;
+    /** @var SaisonRepository */
+    private $saisonRepo;
 
     /**
      * ImportateurFFTAFileCsv constructor.
@@ -88,6 +97,9 @@ class ExporteurXlsResultatSaison
         $this->redColor->setRGB('FF0000');
         $this->yellowColor = new Color();
         $this->yellowColor->setRGB('BF8F00');
+
+        $this->departRepo = $this->em->getRepository(Depart::class);
+        $this->saisonRepo = $this->em->getRepository(Saison::class);
     }
 
     /**
@@ -109,8 +121,7 @@ class ExporteurXlsResultatSaison
             throw new \Exception("output folder non trouvé");
         }
 
-        $saisonRepo = $this->em->getRepository(Saison::class);
-        $objSaison = $saisonRepo->findOneBy([
+        $objSaison = $this->saisonRepo->findOneBy([
             'name'=>$saison
         ]);
         if(is_null($objSaison)){
@@ -118,8 +129,7 @@ class ExporteurXlsResultatSaison
         }
         // Fin de controles des paramètres
 
-        $departRepo = $this->em->getRepository(Depart::class);
-        $this->maxLineDepart = $this->startLineDepart + $departRepo->getNbDepartsForSaison($objSaison) - 1;
+        $this->maxLineDepart = $this->startLineDepart + $this->departRepo->getNbDepartsForSaison($objSaison) - 1;
 
         //Création du fhcihier Excel
         $outFile = new Spreadsheet();
@@ -128,7 +138,7 @@ class ExporteurXlsResultatSaison
         $sheet = $outFile->getActiveSheet();
         $this->exportResultArchers($sheet,$this->startLineDepart,$objSaison);
 
-        $exportFileName = "Recap Score - " . (new \DateTime())->format("Y-m-d") . ".xlsx";
+        $exportFileName = "Recap Score - Saison ". $objSaison->getName() . " - " . (new \DateTime())->format("Y-m-d") . ".xlsx";
         $exportFileName = $outputFolder . $exportFileName;
         $writer = new Xlsx($outFile);
         $writer->save($exportFileName);
@@ -175,6 +185,8 @@ class ExporteurXlsResultatSaison
         $worksheet->setCellValue(self::CLM_DEPART_NUM . $indiceLigneEntete,"N°\nTir");
         $worksheet->setCellValue(self::CLM_RESULTAT_SERIE1 . $indiceLigneEntete,"Série 1");
         $worksheet->setCellValue(self::CLM_RESULTAT_SERIE2 . $indiceLigneEntete,"Série 2");
+        $worksheet->setCellValue(self::CLM_RESULTAT_SERIE3 . $indiceLigneEntete,"Série 3");
+        $worksheet->setCellValue(self::CLM_RESULTAT_SERIE4 . $indiceLigneEntete,"Série 4");
         $worksheet->setCellValue(self::CLM_RESULTAT_SCORE . $indiceLigneEntete,"Score");
         $worksheet->setCellValue(self::CLM_RESULTAT_PLACE . $indiceLigneEntete,"Place");
         $worksheet->setCellValue(self::CLM_RESULTAT_MOYENNE . $indiceLigneEntete,"Moyenne\npts/flêche");
@@ -207,6 +219,8 @@ class ExporteurXlsResultatSaison
         $worksheet->getColumnDimension(self::CLM_DEPART_NUM)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE1)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE2)->setWidth(7);
+        $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE3)->setWidth(7);
+        $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE4)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_SCORE)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_PLACE)->setWidth(5);
 
@@ -225,14 +239,14 @@ class ExporteurXlsResultatSaison
 
     private function exportResultArchers(Worksheet &$worksheet, $startIndice, Saison $objSaison){
         $archers = $this->em->getRepository(Archer::class)->getArchersFromSaison($objSaison);
+
         $startLoopIndice = $startIndice;
 
         /** @var Archer $archer */
         foreach ($archers as $archer) {
             $curIndice = $startLoopIndice;
 
-            //todo restreindre à la saison demandée
-            $departs = $archer->getDeparts();
+            $departs = $this->departRepo->getDepartsForArcherSaison($archer, $objSaison);
             $categorieArcherSaison = $departs[0]->getCategorie();
 
             $worksheet->setCellValue(self::CLM_ARCHER_NOM . $curIndice,$archer->getNom());
@@ -252,7 +266,7 @@ class ExporteurXlsResultatSaison
             //Filtrage par arme pratiqué par l'archer
             $tabDepartsArme = [];
             /** @var Depart $depart */
-            foreach ($archer->getDeparts() as $depart) {
+            foreach ($departs as $depart) {
                 $tabDepartsArme[$depart->getArme()][] = $depart;
             }
 
@@ -298,11 +312,39 @@ class ExporteurXlsResultatSaison
             $worksheet->getStyle(self::CLM_RESULTAT_MOYENNE_SAISON.$curIndice)->getFont()->setColor($colorMoyenneSaison);
         }
         $worksheet->mergeCells(self::CLM_RESULTAT_MOYENNE_SAISON.$curIndice . ":" . self::CLM_RESULTAT_MOYENNE_SAISON.$endIndice);
+        $worksheet->mergeCells(self::CLM_RESULTAT_MOYENNE_SAISON_PREC.$curIndice . ":" . self::CLM_RESULTAT_MOYENNE_SAISON_PREC.$endIndice);
+        $worksheet->mergeCells(self::CLM_RESULTAT_MOYENNE_SAISON_PREC2.$curIndice . ":" . self::CLM_RESULTAT_MOYENNE_SAISON_PREC2.$endIndice);
 
-        $worksheet->setCellValue(self::CLM_ARCHER_DISCIPLINE . $curIndice,$departs[0]->getDiscipline());
+        if(!is_null($moyenneSaisonArmeDiscipline)){
+            $objSaison = $departs[0]->getConcours()->getSaison();
+            $objArcher = $departs[0]->getArcher();
+            $moyenneSaisonPrec = $this->getMoyenneSaisonPrecedente($objArcher,$objSaison,$departs[0]->getDiscipline());
+            if(!is_null($moyenneSaisonPrec["prec1"])){
+                $worksheet->setCellValue(self::CLM_RESULTAT_MOYENNE_SAISON_PREC . $curIndice,$moyenneSaisonPrec["prec1"]);
+                $colorMoyenneSaisonPrec1 = $this->getColorFromVal($moyenneSaisonPrec["prec1"]);
+                if($colorMoyenneSaisonPrec1){
+                    $worksheet->getStyle(self::CLM_RESULTAT_MOYENNE_SAISON_PREC.$curIndice)->getFont()->setColor($colorMoyenneSaisonPrec1);
+                }
+            }
+            if(!is_null($moyenneSaisonPrec["prec2"])){
+                $worksheet->setCellValue(self::CLM_RESULTAT_MOYENNE_SAISON_PREC2 . $curIndice,$moyenneSaisonPrec["prec2"]);
+                $colorMoyenneSaisonPrec2 = $this->getColorFromVal($moyenneSaisonPrec["prec2"]);
+                if($colorMoyenneSaisonPrec2){
+                    $worksheet->getStyle(self::CLM_RESULTAT_MOYENNE_SAISON_PREC2.$curIndice)->getFont()->setColor($colorMoyenneSaisonPrec2);
+                }
+            }
+        }
+
+        $worksheet->setCellValue(self::CLM_ARCHER_DISCIPLINE . $curIndice,Depart::getDisciplineName($departs[0]->getDiscipline()));
         $worksheet->mergeCells(self::CLM_ARCHER_DISCIPLINE.$curIndice . ":" . self::CLM_ARCHER_DISCIPLINE.$endIndice);
 
-        $worksheet->setCellValue(self::CLM_ARCHER_DISTANCE. $curIndice,$departs[0]->getResultat()->getDistance());
+        $distance = $departs[0]->getResultat()->getDistance();
+        if($distance<=10){
+            $distance = "";
+        }else{
+            $distance .= "m";
+        }
+        $worksheet->setCellValue(self::CLM_ARCHER_DISTANCE. $curIndice,$distance);
         $worksheet->mergeCells(self::CLM_ARCHER_DISTANCE.$curIndice . ":" . self::CLM_ARCHER_DISTANCE.$endIndice);
 
         /** @var Depart $depart */
@@ -312,6 +354,8 @@ class ExporteurXlsResultatSaison
             $worksheet->setCellValue(self::CLM_DEPART_NUM.$curIndice, $depart->getNumDepart());
             $worksheet->setCellValue(self::CLM_RESULTAT_SERIE1.$curIndice, $depart->getResultat()->getScoreDistance1());
             $worksheet->setCellValue(self::CLM_RESULTAT_SERIE2.$curIndice, $depart->getResultat()->getScoreDistance2());
+            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE3.$curIndice, $depart->getResultat()->getScoreDistance3());
+            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE4.$curIndice, $depart->getResultat()->getScoreDistance4());
             $worksheet->setCellValue(self::CLM_RESULTAT_SCORE.$curIndice, $depart->getResultat()->getScore());
             $worksheet->setCellValue(self::CLM_RESULTAT_PLACE.$curIndice, $depart->getResultat()->getPlaceDefinitive());
             $worksheet->setCellValue(self::CLM_RESULTAT_MOYENNE.$curIndice, $depart->getResultat()->getMoyenne());
@@ -335,13 +379,16 @@ class ExporteurXlsResultatSaison
             $curIndice += 1;
         }
         $curIndice -= 1;
-        $worksheet->getStyle(self::CLM_ARCHER_DISCIPLINE.$curIndice.":".self::CLM_RESULTAT_MOYENNE_SAISON.$curIndice)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
+        $worksheet->getStyle(self::CLM_ARCHER_DISCIPLINE.$curIndice.":".self::CLM_RESULTAT_MOYENNE_SAISON_PREC2.$curIndice)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
 
         $curIndice += 1;
         return $curIndice;
     }
 
     private function getMoyenne($departs){
+        if(0 == count($departs)){
+            return null;
+        }
         $totalMoyenne = 0;
         /** @var Depart $depart */
         foreach ($departs as $depart) {
@@ -352,6 +399,35 @@ class ExporteurXlsResultatSaison
         }
         $moy = round($totalMoyenne / count($departs),2);
         return $moy;
+    }
+
+    /**
+     * @param Archer $archer
+     * @param Saison $saison
+     * @param $discipline
+     * @return array[prec1] : Moyenne sur la saison N-1
+     * @return array[prec2] : Moyenne sur la saison N-2
+     */
+    private function getMoyenneSaisonPrecedente(Archer $archer, Saison $saison,$discipline){
+        if(is_numeric($saison->getName())){
+            $prec1Saison = $saison->getName() -1;
+            $prec2Saison = $prec1Saison -1;
+
+            $objSaisonPrec1 = $this->saisonRepo->findOneBy([
+                'name'=>$prec1Saison
+            ]);
+            $departsPrec1 = $this->departRepo->getDepartsForArcherSaisonDiscipline($archer,$objSaisonPrec1,$discipline);
+
+            $objSaisonPrec2 = $this->saisonRepo->findOneBy([
+                'name'=>$prec2Saison
+            ]);
+            $departsPrec2 = $this->departRepo->getDepartsForArcherSaisonDiscipline($archer,$objSaisonPrec2,$discipline);
+
+            return [
+                "prec1" => $this->getMoyenne($departsPrec1),
+                "prec2" => $this->getMoyenne($departsPrec2),
+            ];
+        }
     }
 
     private function getColorFromVal($val){
