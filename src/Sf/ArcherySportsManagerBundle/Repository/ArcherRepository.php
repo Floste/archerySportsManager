@@ -18,6 +18,8 @@ class ArcherRepository extends EntityRepository
             ->join('d.concours','c')
             ->andWhere('c.saison = :saison')
             ->setParameter('saison',$saison->getId())
+            ->addOrderBy('a.nom','asc')
+            ->addOrderBy('a.prenom','asc')
             ->getQuery()
             ->getResult()
             ;

@@ -250,8 +250,7 @@ class Depart
     public function getNbFleches(){
         switch ($this->getDiscipline()){
             case self::DISCIPLINE_SALLE:
-                $formuleTir = $this->getConcours()->getFormuleTir();
-                if(strpos($formuleTir,"25")>0 && strpos($formuleTir,"18")>0){
+                if($this->isTarget()){
                     return 120;
                 }else{
                     return 60;
@@ -264,5 +263,20 @@ class Depart
             case self::DISCIPLINE_CAMPAGNE:
                 return null;
         }
+    }
+
+    //Indique si ce départ de discipline salle
+    // est un cas pariculier de Target
+    //Un tagret, c'est 2 séries à 25m et 2 séries à 18m
+    public function isTarget(){
+        if(self::DISCIPLINE_SALLE == $this->getDiscipline()){
+            $formuleTir = $this->getConcours()->getFormuleTir();
+            if(strpos($formuleTir,"25")>0 && strpos($formuleTir,"18")>0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
     }
 }

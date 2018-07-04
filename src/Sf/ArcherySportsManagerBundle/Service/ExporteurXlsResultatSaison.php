@@ -40,14 +40,12 @@ class ExporteurXlsResultatSaison
     const CLM_DEPART_NUM = 'J';
     const CLM_RESULTAT_SERIE1 = 'K';
     const CLM_RESULTAT_SERIE2 = 'L';
-    const CLM_RESULTAT_SERIE3 = 'M';
-    const CLM_RESULTAT_SERIE4 = 'N';
-    const CLM_RESULTAT_SCORE = 'O';
-    const CLM_RESULTAT_PLACE = 'P';
-    const CLM_RESULTAT_MOYENNE = 'Q';
-    const CLM_RESULTAT_MOYENNE_SAISON = 'R';
-    const CLM_RESULTAT_MOYENNE_SAISON_PREC = 'S';
-    const CLM_RESULTAT_MOYENNE_SAISON_PREC2 = 'T';
+    const CLM_RESULTAT_SCORE = 'M';
+    const CLM_RESULTAT_PLACE = 'N';
+    const CLM_RESULTAT_MOYENNE = 'O';
+    const CLM_RESULTAT_MOYENNE_SAISON = 'P';
+    const CLM_RESULTAT_MOYENNE_SAISON_PREC = 'Q';
+    const CLM_RESULTAT_MOYENNE_SAISON_PREC2 = 'R';
 
     /**
      * @var EntityManager $em
@@ -185,8 +183,6 @@ class ExporteurXlsResultatSaison
         $worksheet->setCellValue(self::CLM_DEPART_NUM . $indiceLigneEntete,"N°\nTir");
         $worksheet->setCellValue(self::CLM_RESULTAT_SERIE1 . $indiceLigneEntete,"Série 1");
         $worksheet->setCellValue(self::CLM_RESULTAT_SERIE2 . $indiceLigneEntete,"Série 2");
-        $worksheet->setCellValue(self::CLM_RESULTAT_SERIE3 . $indiceLigneEntete,"Série 3");
-        $worksheet->setCellValue(self::CLM_RESULTAT_SERIE4 . $indiceLigneEntete,"Série 4");
         $worksheet->setCellValue(self::CLM_RESULTAT_SCORE . $indiceLigneEntete,"Score");
         $worksheet->setCellValue(self::CLM_RESULTAT_PLACE . $indiceLigneEntete,"Place");
         $worksheet->setCellValue(self::CLM_RESULTAT_MOYENNE . $indiceLigneEntete,"Moyenne\npts/flêche");
@@ -196,6 +192,7 @@ class ExporteurXlsResultatSaison
         $worksheet->getRowDimension($indiceLigneEntete.":".$indiceLigneEntete)->setRowHeight(30);
 
         //Colonne nom et prénom
+        $worksheet->getStyle(self::CLM_ARCHER_NOM.$indiceLigneEntete.":".self::CLM_ARCHER_NOM.$this->maxLineDepart)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_MEDIUM);
         $worksheet->getColumnDimension(self::CLM_ARCHER_NOM)->setWidth(15);
         $worksheet->getColumnDimension(self::CLM_ARCHER_PRENOM)->setWidth(12);
         $worksheet->getStyle(self::CLM_ARCHER_PRENOM . ":" . self::CLM_ARCHER_PRENOM)->getFont()->setBold(true);
@@ -219,8 +216,6 @@ class ExporteurXlsResultatSaison
         $worksheet->getColumnDimension(self::CLM_DEPART_NUM)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE1)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE2)->setWidth(7);
-        $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE3)->setWidth(7);
-        $worksheet->getColumnDimension(self::CLM_RESULTAT_SERIE4)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_SCORE)->setWidth(7);
         $worksheet->getColumnDimension(self::CLM_RESULTAT_PLACE)->setWidth(5);
 
@@ -349,13 +344,22 @@ class ExporteurXlsResultatSaison
 
         /** @var Depart $depart */
         foreach ($departs as $depart) {
+            $complementLieu = "";
+            //Cas particulier des departs en mode target
+            if($depart->isTarget()){
+                $scoreSerie1 = $depart->getResultat()->getScoreDistance1() + $depart->getResultat()->getScoreDistance2();
+                $scoreSerie2 = $depart->getResultat()->getScoreDistance3() + $depart->getResultat()->getScoreDistance4();
+                $complementLieu = " (T)";
+            }else{
+                $scoreSerie1 = $depart->getResultat()->getScoreDistance1();
+                $scoreSerie2 = $depart->getResultat()->getScoreDistance2();
+            }
+
             $worksheet->setCellValue(self::CLM_CONCOURS_DATE.$curIndice, $depart->getConcours()->getStartDate()->format("d/m/Y"));
-            $worksheet->setCellValue(self::CLM_CONCOURS_LIEU.$curIndice, $depart->getConcours()->getLieu());
+            $worksheet->setCellValue(self::CLM_CONCOURS_LIEU.$curIndice, $depart->getConcours()->getLieu().$complementLieu);
             $worksheet->setCellValue(self::CLM_DEPART_NUM.$curIndice, $depart->getNumDepart());
-            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE1.$curIndice, $depart->getResultat()->getScoreDistance1());
-            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE2.$curIndice, $depart->getResultat()->getScoreDistance2());
-            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE3.$curIndice, $depart->getResultat()->getScoreDistance3());
-            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE4.$curIndice, $depart->getResultat()->getScoreDistance4());
+            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE1.$curIndice, $scoreSerie1);
+            $worksheet->setCellValue(self::CLM_RESULTAT_SERIE2.$curIndice, $scoreSerie2);
             $worksheet->setCellValue(self::CLM_RESULTAT_SCORE.$curIndice, $depart->getResultat()->getScore());
             $worksheet->setCellValue(self::CLM_RESULTAT_PLACE.$curIndice, $depart->getResultat()->getPlaceDefinitive());
             $worksheet->setCellValue(self::CLM_RESULTAT_MOYENNE.$curIndice, $depart->getResultat()->getMoyenne());
