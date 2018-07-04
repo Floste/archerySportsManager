@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Sf\ArcherySportsManagerBundle\Entity\Archer;
@@ -25,6 +26,8 @@ use Sf\ArcherySportsManagerBundle\Entity\Depart;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
 use Sf\ArcherySportsManagerBundle\Repository\DepartRepository;
 use Sf\ArcherySportsManagerBundle\Repository\SaisonRepository;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class ExporteurXlsResultatSaison
 {
@@ -73,11 +76,14 @@ class ExporteurXlsResultatSaison
     /** @var SaisonRepository */
     private $saisonRepo;
 
+    /** @var string */
+    private $rootDir;
+
     /**
      * ImportateurFFTAFileCsv constructor.
      * @param EntityManager $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, KernelInterface $kernel)
     {
         @ini_set("memory_limit",'512M');
         $this->em = $em;
@@ -98,6 +104,8 @@ class ExporteurXlsResultatSaison
 
         $this->departRepo = $this->em->getRepository(Depart::class);
         $this->saisonRepo = $this->em->getRepository(Saison::class);
+
+        $this->rootDir = $kernel->getRootDir();
     }
 
     /**
@@ -135,6 +143,8 @@ class ExporteurXlsResultatSaison
 
         $sheet = $outFile->getActiveSheet();
         $this->exportResultArchers($sheet,$this->startLineDepart,$objSaison);
+
+        $this->addImageLogo($sheet);
 
         $exportFileName = "Recap Score - Saison ". $objSaison->getName() . " - " . (new \DateTime())->format("Y-m-d") . ".xlsx";
         $exportFileName = $outputFolder . $exportFileName;
@@ -444,5 +454,17 @@ class ExporteurXlsResultatSaison
             $returnColor = $this->blueColor;
         }
         return $returnColor;
+    }
+
+    private function addImageLogo(Worksheet &$worksheet){
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Logo');
+        $drawing->setPath($this->rootDir . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'logo-archers-kervignac.png');
+        $drawing->setWorksheet($worksheet);
+//        $drawing->setCoordinates('B15');
+        $drawing->setOffsetX(10);
+        $drawing->setOffsetY(10);
+        $drawing->setHeight(80);
     }
 }
