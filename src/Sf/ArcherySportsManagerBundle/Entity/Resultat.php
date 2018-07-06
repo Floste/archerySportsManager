@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Depart
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Sf\ArcherySportsManagerBundle\Repository\ResultatRepository")
  *
 */
 class Resultat
