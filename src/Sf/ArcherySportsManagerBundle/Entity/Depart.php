@@ -29,7 +29,7 @@ class Depart
         switch ($discipline){
             case self::DISCIPLINE_SALLE : return "Salle";
             case self::DISCIPLINE_FEDERAL : return "Fédéral";
-            case self::DISCIPLINE_FITA : return "Fita";
+            case self::DISCIPLINE_FITA : return "FITA";
             case self::DISCIPLINE_NATURE : return "Nature";
             case self::DISCIPLINE_3D : return "3D";
             case self::DISCIPLINE_CAMPAGNE : return "Campagne";

@@ -94,6 +94,7 @@ class ExporteurJsPalmaresSaison
         $str = json_encode($ret);
         $str = str_replace("Pr\u00e9nom","Prénom",$str);
         $str = str_replace("\/","/",$str);
+        $str = str_replace("'","&quot;",$str);
         return "var palmaresIndividuel = " . $str . "; ";
     }
 
@@ -104,7 +105,7 @@ class ExporteurJsPalmaresSaison
             "Categorie" => $result->getDepart()->getCategorie(),
             "Sexe" => $result->getDepart()->getArcher()->getSexe(),
             "Arme" => $result->getDepart()->getArme(),
-            "Discipline" => $this->getExportJsDiscipline($result->getDepart()->getDiscipline()),
+            "Discipline" => Depart::getDisciplineName(($result->getDepart()->getDiscipline())),
             "Blason" => $result->getDepart()->getResultat()->getBlason(),
             "Date" => $result->getDepart()->getConcours()->getStartDate()->format("d/m/Y"),
             "Organisateur" => $result->getDepart()->getConcours()->getNomStructureOrganisatrice(),
@@ -118,14 +119,4 @@ class ExporteurJsPalmaresSaison
         return "var palmaresEquipe = []; ";
     }
 
-    private function getExportJsDiscipline($discipline){
-        switch ($discipline){
-            case "S": return "Salle";
-            case "F": return "Fita";
-            case "E" : return "Fédéral";
-            case "C" : return "Campagne";
-            case "3" : return "Nature";
-            case "N" : return "Nature";
-        }
-    }
 }
