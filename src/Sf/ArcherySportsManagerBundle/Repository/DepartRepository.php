@@ -24,6 +24,17 @@ class DepartRepository extends EntityRepository
             ;
     }
 
+    public function getNbCompetiteursForSaison(Saison $saison){
+        return $this->createQueryBuilder('d')
+            ->select('count(distinct a.id)')
+            ->join('d.concours','c')
+            ->join('d.archer','a')
+            ->andWhere('c.saison = :saison')
+            ->setParameter('saison',$saison->getId())
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
     public function getDepartsForArcherSaisonDiscipline(Archer $archer, Saison $saison, $discipline){
         return $this->createQueryBuilder('d')
             ->join('d.concours','c')

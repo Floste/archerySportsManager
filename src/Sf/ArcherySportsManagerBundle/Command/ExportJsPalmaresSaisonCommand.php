@@ -9,7 +9,7 @@
 namespace Sf\ArcherySportsManagerBundle\Command;
 
 
-use Sf\ArcherySportsManagerBundle\Service\ExporteurJsonPalmaresSaison;
+use Sf\ArcherySportsManagerBundle\Service\ExporteurJsPalmaresSaison;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,9 +24,9 @@ class ExportJsPalmaresSaisonCommand extends ContainerAwareCommand
 
     /**
      * ExportJsonPalmaresSaisonCommand constructor.
-     * @param ExporteurJsonPalmaresSaison $exporteurJsonPalmaresSaison
+     * @param ExporteurJsPalmaresSaison $exporteurJsonPalmaresSaison
      */
-    public function __construct(ExporteurJsonPalmaresSaison $exporteurJsonPalmaresSaison)
+    public function __construct(ExporteurJsPalmaresSaison $exporteurJsonPalmaresSaison)
     {
         parent::__construct();
         $this->exporteurJsonPalmaresSaison = $exporteurJsonPalmaresSaison;

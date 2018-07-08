@@ -10,12 +10,14 @@ namespace Sf\ArcherySportsManagerBundle\Service;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Sf\ArcherySportsManagerBundle\Entity\Depart;
 use Sf\ArcherySportsManagerBundle\Entity\Resultat;
 use Sf\ArcherySportsManagerBundle\Entity\Saison;
+use Sf\ArcherySportsManagerBundle\Repository\DepartRepository;
 use Sf\ArcherySportsManagerBundle\Repository\ResultatRepository;
 use Sf\ArcherySportsManagerBundle\Repository\SaisonRepository;
 
-class ExporteurJsonPalmaresSaison
+class ExporteurJsPalmaresSaison
 {
 
     /**
@@ -27,12 +29,15 @@ class ExporteurJsonPalmaresSaison
     private $resultatRepo;
     /** @var SaisonRepository */
     private $saisonRepo;
+    /** @var DepartRepository */
+    private $departRepo;
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
         $this->resultatRepo = $this->em->getRepository(Resultat::class);
         $this->saisonRepo = $this->em->getRepository(Saison::class);
+        $this->departRepo = $this->em->getRepository(Depart::class);
     }
 
     /**
@@ -64,7 +69,19 @@ class ExporteurJsonPalmaresSaison
         $fileNameExport = "palmares-data-";
         $fileNameExport .= $objSaison->getName();
         $fileNameExport .= ".js";
-        file_put_contents($outputFolder . DIRECTORY_SEPARATOR . $fileNameExport, $this->getStrPalmaresIndividuel($objSaison));
+        $outFilePath = $outputFolder . DIRECTORY_SEPARATOR . $fileNameExport;
+        file_put_contents($outFilePath, $this->getStrInfosClub($objSaison));
+        file_put_contents($outFilePath, $this->getStrPalmaresIndividuel($objSaison),FILE_APPEND);
+        file_put_contents($outFilePath, $this->getStrPalmaresEquipe($objSaison),FILE_APPEND);
+    }
+
+    private function getStrInfosClub(Saison $objSaison){
+        return "
+            var infosClub = [
+                '" . $this->departRepo->getNbCompetiteursForSaison($objSaison) . " compétiteurs',
+                '" . $this->departRepo->getNbDepartsForSaison($objSaison) . " départs en compétitions'
+            ];
+        ";
     }
 
     private function getStrPalmaresIndividuel(Saison $objSaison){
@@ -76,6 +93,7 @@ class ExporteurJsonPalmaresSaison
         }
         $str = json_encode($ret);
         $str = str_replace("Pr\u00e9nom","Prénom",$str);
+        $str = str_replace("\/","/",$str);
         return "var palmaresIndividuel = " . $str . "; ";
     }
 
@@ -86,7 +104,7 @@ class ExporteurJsonPalmaresSaison
             "Categorie" => $result->getDepart()->getCategorie(),
             "Sexe" => $result->getDepart()->getArcher()->getSexe(),
             "Arme" => $result->getDepart()->getArme(),
-            "Discipline" => $result->getDepart()->getDiscipline(),
+            "Discipline" => $this->getExportJsDiscipline($result->getDepart()->getDiscipline()),
             "Blason" => $result->getDepart()->getResultat()->getBlason(),
             "Date" => $result->getDepart()->getConcours()->getStartDate()->format("d/m/Y"),
             "Organisateur" => $result->getDepart()->getConcours()->getNomStructureOrganisatrice(),
@@ -96,4 +114,18 @@ class ExporteurJsonPalmaresSaison
         ];
     }
 
+    private function getStrPalmaresEquipe(Saison $objSaison){
+        return "var palmaresEquipe = []; ";
+    }
+
+    private function getExportJsDiscipline($discipline){
+        switch ($discipline){
+            case "S": return "Salle";
+            case "F": return "Fita";
+            case "E" : return "Fédéral";
+            case "C" : return "Campagne";
+            case "3" : return "Nature";
+            case "N" : return "Nature";
+        }
+    }
 }
