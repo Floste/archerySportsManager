@@ -7,9 +7,9 @@
     "test": "tests"
   },
   "dependencies": {
-    "less": "^2.5.3",
-    "uglify-js": "^2.7.3",
-    "uglifycss": "0.0.21"
+    "less": "^3.8.1",
+    "uglify-js": "^3.4.9",
+    "uglifycss": "0.0.29"
   },
   "devDependencies": {},
   "scripts": {
