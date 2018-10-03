@@ -22,6 +22,7 @@
     },
     "require": {
         "php": ">=5.5.9",
+        "components/jquery": "^3.3",
         "coresphere/console-bundle": "^0.5.0",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
@@ -29,11 +30,13 @@
         "phpoffice/phpspreadsheet": "^1.3",
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^5.0.0",
+        "symfony/assetic-bundle": "^2.8",
         "symfony/monolog-bundle": "^3.1.0",
         "symfony/polyfill-apcu": "^1.0",
         "symfony/swiftmailer-bundle": "^2.6.4",
         "symfony/symfony": "3.4.*",
-        "twig/twig": "^1.0||^2.0"
+        "twig/twig": "^1.0||^2.0",
+        "twitter/bootstrap": "^4.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

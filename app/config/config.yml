@@ -15,6 +15,8 @@ framework:
     router:
         resource: '%kernel.project_dir%/app/config/routing.yml'
         strict_requirements: ~
+    templating:
+        engines: ['twig']
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
@@ -65,3 +67,23 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+
+assetic:
+    node: "%node_bin%"
+    filters:
+        less:
+            node_paths: ["node_modules"]
+            apply_to: ".less$"
+    assets:
+        bootstrap_css:
+            inputs:
+            - '%kernel.root_dir%/../vendor/twitter/bootstrap/dist/css/bootstrap.css'
+            output: 'build/css/bootstrap.css'
+        bootstrap_js:
+            inputs:
+            - '%kernel.root_dir%/../vendor/twitter/bootstrap/dist/js/bootstrap.js'
+            output: 'build/js/bootstrap.js'
+        jquery_js:
+            inputs:
+            - '%kernel.root_dir%/../vendor/components/jquery/jquery.js'
+            output: 'build/js/jquery.js'

@@ -1,7 +1,6 @@
 sf_archery_sports_manager:
-    resource: "@SfArcherySportsManagerBundle/Controller/"
-    type:     annotation
-    prefix:   /
+    resource: "@SfArcherySportsManagerBundle/Resources/config/routing.yml"
+    prefix:   /archerySportsManager
 
 app:
     resource: '@AppBundle/Controller/'

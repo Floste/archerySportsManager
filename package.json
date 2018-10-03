@@ -1,0 +1,25 @@
+{
+  "name": "archery-sports-manager",
+  "version": "0.0.0",
+  "description": "Manager score for archery ======",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "less": "^2.5.3",
+    "uglify-js": "^2.7.3",
+    "uglifycss": "0.0.21"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Floste/archerySportsManager.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true
+}

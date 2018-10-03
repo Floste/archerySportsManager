@@ -3,8 +3,19 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        {% stylesheets filter="less"  output="build/css/main.css"
+            '@bootstrap_css'
+            '../app/Resources/css/base.css'
+        %}
+            <link rel="stylesheet" href="{{ asset_url }}">
+        {% endstylesheets %}
+        {% javascripts
+            '@jquery_js'
+            '@bootstrap_js'
+            output="build/js/mainBackOffice.js" %}
+            <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% block stylesheetsAdd %}{% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
