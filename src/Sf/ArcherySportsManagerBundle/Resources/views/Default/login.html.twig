@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="well text-center">
+        <h1>Connexion à la gestion sportive des archers</h1>
+        <br />
+        <br />
+        {% if error %}
+            <div class="alert alert-danger">{{ error.message | trans }}</div>
+        {% endif %}
+        <form action="{{ path('security_login') }}" method="post" class="form-inline ">
+            <label for="username">Email :</label>
+            <input type="text" id="username" name="_username" class="form-control" value="{{ last_username }}" />
+
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" class="form-control" name="_password" />
+
+            <input type="hidden" name="_csrf_token"
+                   value="{{ csrf_token('authenticate') }}"
+            >
+            <button type="submit" class="btn btn-primary">Ok</button>
+        </form>
+        {#<a href="#}{# todo path('azimut_abiboisArchives_mdp_perdu') #}{#">Mot de passe perdu</a>#}
+    </div>
+{% endblock %}

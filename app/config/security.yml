@@ -2,10 +2,21 @@
 # https://symfony.com/doc/current/security.html
 security:
 
-    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+security:
+    encoders:
+        Sf\ArcherySportsManagerBundle\Entity\User: bcrypt
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory:
-            memory: ~
+        db_users_provider:
+            entity:
+                class: Sf\ArcherySportsManagerBundle\Entity\User
+                property: username
+
+    role_hierarchy:
+        ROLE_ARCHER:       [ROLE_USER] # administrators
+        ROLE_ADMIN:       [ROLE_USER] # administrators
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH] # Azimut only
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -14,11 +25,22 @@ security:
             security: false
 
         main:
+            pattern:    ^/
             anonymous: ~
-            # activate different ways to authenticate
+            provider: db_users_provider
+            form_login:
+                login_path: security_login
+                check_path: security_login
+                always_use_default_target_path: false
+                default_target_path: backoffice_homepage
+                csrf_token_generator: security.csrf.token_manager
+            logout:
+                path:   /logout
+                target: /login
 
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            #http_basic: ~
-
-            # https://symfony.com/doc/current/security/form_login_setup.html
-            #form_login: ~
+    access_control:
+        - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /connect, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /users, roles: ROLE_ADMIN }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
