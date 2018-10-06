@@ -3,8 +3,13 @@
 namespace Sf\ArcherySportsManagerBundle\Controller;
 
 use Sf\ArcherySportsManagerBundle\Entity\User;
+use Sf\ArcherySportsManagerBundle\Form\LostPasswordType;
+use Sf\ArcherySportsManagerBundle\Form\ResetPasswordType;
 use Sf\ArcherySportsManagerBundle\Form\UserType;
+use Sf\ArcherySportsManagerBundle\Service\TransactionMailManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -13,6 +18,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class SecurityController extends Controller
 {
+    /**
+     * @var TransactionMailManager
+     */
+    private $transactionMailManager;
+    /**
+     * SecurityController constructor.
+     */
+    public function __construct(TransactionMailManager $transactionMailManager)
+    {
+        $this->transactionMailManager = $transactionMailManager;
+    }
+
 
     /**
      * Authentification des utilisateurs partenaires
@@ -98,4 +115,68 @@ class SecurityController extends Controller
 
     }
 
+    public function lostPasswordAction(Request $request)
+    {
+        $form = $this->createForm(LostPasswordType::class)
+            ->add('submit', SubmitType::class, [
+                'label' => 'Valider',
+                'attr' => ['class' => 'btn btn-primary'],
+            ])
+        ;
+
+        $emailSent = false;
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->findOneBy(["email"=>$form->get('email')->getData()]);
+            if (null != $user) {
+                $this->transactionMailManager->envoiMailResetPassword($user);
+                $emailSent = true;
+            }
+            else {
+                $form->get('email')->addError(new FormError('Utilisateur non trouvé'));
+            }
+        }
+
+        return $this->render('@SfArcherySportsManager/security/mdp_perdu.html.html.twig',[
+            "emailSent" => $emailSent,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function passwordResetAction(Request $request, $token)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $tokenFound = false;
+        $passwordReseted = false;
+        $user = $em->getRepository(User::class)->findOneBy(["resetToken"=>$token]);
+
+        if (null != $user) {
+            $tokenFound = true;
+
+            $form = $this->createForm(ResetPasswordType::class, $user)
+                ->add('submit', SubmitType::class, [
+                    'label' => 'Changer le mot de passe',
+                ]);
+
+            if ($form->handleRequest($request)->isValid()) {
+                $user->setResetToken(null);
+                $em = $this->getDoctrine()->getManager();
+                $encodePassword = $this->get('security.password_encoder')->encodePassword($user,$user->getPlainPassword());
+                $user->setPassword($encodePassword);
+                $em->flush();
+                $passwordReseted = true;
+            }
+        }
+
+        return $this->render('@SfArcherySportsManager/security/mdp-reset.html.twig', [
+            'form' => isset($form)?$form->createView():null,
+            'token' => $token,
+            'tokenFound' => $tokenFound,
+            'passwordReseted' => $passwordReseted
+        ]);
+    }
 }

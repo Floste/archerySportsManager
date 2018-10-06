@@ -64,8 +64,10 @@ doctrine:
 swiftmailer:
     transport: '%mailer_transport%'
     host: '%mailer_host%'
+    port: '%mailer_port%'
     username: '%mailer_user%'
     password: '%mailer_password%'
+    sender_address: '%mailer_sender%'
     spool: { type: memory }
 
 assetic:
@@ -87,3 +89,11 @@ assetic:
             inputs:
             - '%kernel.root_dir%/../vendor/components/jquery/jquery.js'
             output: 'build/js/jquery.js'
+
+ewz_recaptcha:
+    public_key:  "%recaptcha_public_key%"
+    private_key: "%recaptcha_private_key%"
+    # Not needed as "%kernel.default_locale%" is the default value for the locale key
+    locale_key:  "%kernel.default_locale%"
+    locale_from_request: true
+    enabled: true

@@ -14,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    const RESET_TOKEN_LIFETIME = 120; // lifetime in minutes
+
     /**
      * @var int
      *
@@ -69,6 +71,15 @@ class User implements UserInterface
      */
     private $isAdmin;
 
+    /**
+     * @ORM\Column(type="string", length=32, nullable=true)
+     */
+    private $resetToken;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $resetTokenDateTime;
 
     public function __construct()
     {
@@ -254,6 +265,53 @@ class User implements UserInterface
     public function getIsAdmin()
     {
         return $this->isAdmin;
+    }
+
+    /**
+     * Get reset token
+     *
+     * @return string
+     */
+    public function getResetToken()
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * Set reset token
+     *
+     * @param string $resetToken
+     *
+     * @return self
+     */
+    public function setResetToken($resetToken)
+    {
+        $this->resetToken = $resetToken;
+        $this->setResetTokenDateTime(null == $resetToken ? null : new \DateTime());
+        return $this;
+    }
+
+    /**
+     * Get reset token date time
+     *
+     * @return \DateTime
+     */
+    public function getResetTokenDateTime()
+    {
+        return $this->resetTokenDateTime;
+    }
+
+    /**
+     * Set reset token date time
+     *
+     * @param \DateTime|null $resetTokenDateTime
+     *
+     * @return self
+     */
+    public function setResetTokenDateTime($resetTokenDateTime)
+    {
+        $this->resetTokenDateTime = $resetTokenDateTime;
+        return $this;
     }
 
 }

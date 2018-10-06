@@ -7,3 +7,8 @@ services:
         resource: '../../*'
         exclude: '../../{Entity,Repository}'
 
+    Sf\ArcherySportsManagerBundle\Service\TransactionMailManager:
+        arguments:
+            $mailer: '@swiftmailer.mailer.default'
+            $mailer_sender: 'toto@local'
+
