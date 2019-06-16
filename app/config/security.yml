@@ -39,6 +39,9 @@ security:
                 target: /login
 
     access_control:
+        - { path: /build, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /mdp-reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /mdp-perdu, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: /logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: /connect, roles: IS_AUTHENTICATED_ANONYMOUSLY }

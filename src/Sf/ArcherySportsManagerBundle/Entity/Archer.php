@@ -14,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Archer
 {
 
+    const CATEGORIE_SENIOR1 = 'S1';
+    const CATEGORIE_SENIOR2 = 'S2';
+    const CATEGORIE_SENIOR3 = 'S3';
     const CATEGORIE_SENIOR = 'S';
     const CATEGORIE_VETERAN = 'V';
     const CATEGORIE_SUPER_VETERAN = 'SV';

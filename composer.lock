@@ -4,8 +4,105 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eff5ca83d015eed8083f59bdde84dd68",
+    "content-hash": "1a56233b76acf6447cebf323416ccb32",
     "packages": [
+        {
+            "name": "components/bootstrap",
+            "version": "4.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/components/bootstrap.git",
+                "reference": "6c183f17f5d8fbfb38af412c5e0a52135f7d01c9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/components/bootstrap/zipball/6c183f17f5d8fbfb38af412c5e0a52135f7d01c9",
+                "reference": "6c183f17f5d8fbfb38af412c5e0a52135f7d01c9",
+                "shasum": ""
+            },
+            "require": {
+                "components/jquery": ">=2"
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "js/bootstrap.js"
+                    ],
+                    "files": [
+                        "js/*.js",
+                        "css/*.css",
+                        "css/*.map"
+                    ],
+                    "shim": {
+                        "deps": [
+                            "jquery"
+                        ]
+                    }
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Thornton",
+                    "email": "jacobthornton@gmail.com"
+                },
+                {
+                    "name": "Mark Otto",
+                    "email": "markdotto@gmail.com"
+                }
+            ],
+            "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
+            "homepage": "http://getbootstrap.com",
+            "keywords": [
+                "css",
+                "framework",
+                "front-end",
+                "mobile-first",
+                "responsive",
+                "sass",
+                "web"
+            ],
+            "time": "2018-05-06T21:06:16+00:00"
+        },
+        {
+            "name": "components/font-awesome",
+            "version": "5.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/components/font-awesome.git",
+                "reference": "2273b93337e2296539665c40520308207b35ff6d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/components/font-awesome/zipball/2273b93337e2296539665c40520308207b35ff6d",
+                "reference": "2273b93337e2296539665c40520308207b35ff6d",
+                "shasum": ""
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "styles": [
+                        "css/fontawesome-all.css"
+                    ],
+                    "files": [
+                        "css/fontawesome-all.min.css",
+                        "webfonts/*"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "CC-BY-4.0",
+                "MIT",
+                "OFL-1.1"
+            ],
+            "description": "Font Awesome, the iconic SVG, font, and CSS framework.",
+            "time": "2018-10-31T11:12:29+00:00"
+        },
         {
             "name": "components/jquery",
             "version": "3.3.1",
@@ -160,6 +257,29 @@
                 "symfony"
             ],
             "time": "2017-02-22T13:12:30+00:00"
+        },
+        {
+            "name": "datatables/datatables",
+            "version": "1.10.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DataTables/DataTables.git",
+                "reference": "156faa83386460c578e00c460eca9766e38a0c5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DataTables/DataTables/zipball/156faa83386460c578e00c460eca9766e38a0c5f",
+                "reference": "156faa83386460c578e00c460eca9766e38a0c5f",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "DataTables is a plug-in for the jQuery Javascript library. It is a highly flexible tool, based upon the foundations of progressive enhancement, which will add advanced interaction controls to any HTML table.",
+            "homepage": "http://www.datatables.net/",
+            "time": "2018-06-22T15:34:14+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -871,12 +991,12 @@
             "version": "v2.6.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/doctrine/doctrine2.git",
+                "url": "https://github.com/doctrine/orm.git",
                 "reference": "87ee409783a4a322b5597ebaae558661404055a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/87ee409783a4a322b5597ebaae558661404055a7",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/87ee409783a4a322b5597ebaae558661404055a7",
                 "reference": "87ee409783a4a322b5597ebaae558661404055a7",
                 "shasum": ""
             },
@@ -1155,6 +1275,51 @@
             "time": "2018-02-13T18:05:56+00:00"
         },
         {
+            "name": "iron-summit-media/startbootstrap-sb-admin-2",
+            "version": "v3.3.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git",
+                "reference": "49fbecb507c36e83de055bdd836ef2d03352300e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BlackrockDigital/startbootstrap-sb-admin-2/zipball/49fbecb507c36e83de055bdd836ef2d03352300e",
+                "reference": "49fbecb507c36e83de055bdd836ef2d03352300e",
+                "shasum": ""
+            },
+            "require": {
+                "components/bootstrap": ">=3.0",
+                "components/font-awesome": ">=4.0",
+                "datatables/datatables": ">=1.10",
+                "onokumus/metismenu": ">=2.0"
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "dist/js/sb-admin-2.js"
+                    ],
+                    "files": [
+                        "dist/css/sb-admin-2.css"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Miller",
+                    "email": "david@ironsummitmedia.com"
+                }
+            ],
+            "description": "SB Admin 2 is an open source, admin dashboard template for Bootstrap created by Start Bootstrap.",
+            "homepage": "https://github.com/davidtmiller",
+            "time": "2016-07-25T20:49:41+00:00"
+        },
+        {
             "name": "jdorn/sql-formatter",
             "version": "v1.2.17",
             "source": {
@@ -1358,6 +1523,48 @@
                 "psr-3"
             ],
             "time": "2017-06-19T01:22:40+00:00"
+        },
+        {
+            "name": "onokumus/metismenu",
+            "version": "v3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/onokumus/metismenu.git",
+                "reference": "8175e7bd387c22b090f4fec72675fb72ced679d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/onokumus/metismenu/zipball/8175e7bd387c22b090f4fec72675fb72ced679d4",
+                "reference": "8175e7bd387c22b090f4fec72675fb72ced679d4",
+                "shasum": ""
+            },
+            "suggest": {
+                "components/jquery": ">=1.9"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Osman Nuri Okumus",
+                    "email": "onokumus@gmail.com",
+                    "homepage": "http://onokumus.com"
+                }
+            ],
+            "description": "A jQuery menu plugin",
+            "homepage": "https://github.com/onokumus/metisMenu",
+            "keywords": [
+                "JS",
+                "bootstrap",
+                "css",
+                "jquery",
+                "menu",
+                "plugin",
+                "web"
+            ],
+            "time": "2018-10-05T15:21:56+00:00"
         },
         {
             "name": "paragonie/random_compat",

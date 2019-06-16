@@ -4,7 +4,8 @@
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% stylesheets filter="less"  output="build/css/main.css"
-            '@bootstrap_css'
+            '../vendor/twitter/bootstrap/dist/css/bootstrap.css'
+            '../vendor/iron-summit-media/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css'
             '../app/Resources/css/base.css'
         %}
             <link rel="stylesheet" href="{{ asset_url }}">
